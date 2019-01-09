@@ -1,0 +1,23 @@
+{
+  "name": "attendance-api",
+  "version": "1.0.0",
+  "description": "API for attendance application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CIS4914Spring19AttendanceApplication/api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CIS4914Spring19AttendanceApplication/api/issues"
+  },
+  "homepage": "https://github.com/CIS4914Spring19AttendanceApplication/api#readme",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4"
+  }
+}
