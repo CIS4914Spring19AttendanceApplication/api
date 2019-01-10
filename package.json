@@ -19,6 +19,7 @@
   "homepage": "https://github.com/CIS4914Spring19AttendanceApplication/api#readme",
   "dependencies": {
     "dotenv": "^6.2.0",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "http": "0.0.0"
   }
 }
