@@ -16,7 +16,7 @@ app.listen(port, function () {
 
 
 setInterval(function() {
-    http.get("https://attendanceapp-api.herokuapp.com/");
+    http.get("http://attendanceapp-api.herokuapp.com/");
     var d = new Date();
     console.log("Keep-alive: " + d.getMonth() + "/" +d.getDate() + " | " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
 }, 5000); 
