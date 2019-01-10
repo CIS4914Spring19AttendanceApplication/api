@@ -19,4 +19,4 @@ setInterval(function() {
     http.get("https://attendanceapp-api.herokuapp.com/");
     var d = new Date();
     console.log("Keep-alive: " + d.getMonth() + "/" +d.getDate() + " | " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
-}, 900000); 
+}, 5000); 
