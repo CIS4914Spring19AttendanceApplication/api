@@ -1,11 +1,8 @@
 var mongoose = require('mongoose');
-var Organization = require('./organization-model').schema;
+var Enrollments = require('./enrollment-model').schema;
 
 var User = mongoose.Schema({
-    organization: {
-        type: Organization,
-        required: true
-    },
+    enrollments: [Enrollments],
     email: {
         type: String,
         required: true
@@ -22,10 +19,13 @@ var User = mongoose.Schema({
         type: String,
         required: true
     },
-    hashed_pass: {
-        type: Date, 
-        default: Date.now,
+    year: {
+        type: String,
         required: true
+    },
+    hashed_pass: {
+        type: String, 
+        required: false
     }
 });
 

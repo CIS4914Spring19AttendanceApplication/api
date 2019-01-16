@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
-var CheckIn = require('./checkin-model').schema;
+var OrgReq = require('./organization-req-model').schema;
 
 var Event = new mongoose.Schema({
-
-    organization: {
+    organization_id: {
         type: String,
         required: true
     },
@@ -19,17 +18,36 @@ var Event = new mongoose.Schema({
         type: String,
         required: true
     },
+    event_qr_code: {
+        type: String,
+        required: true
+    },
+    event_location_enforce: {
+        type: Boolean,
+        required: true
+    },
+    event_location_radius: {
+        type: String,
+        required: true
+    },
     event_toggle: {
         type: Boolean,
         default: false,
         required: true
     },
-    event_checkins: [CheckIn],
+    event_reqs: [{
+        type: String,
+        required: true
+    }],
     created_by: {
         type: String,
         required: true
+    },
+    date_created: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
-    
 });
 
 module.exports = mongoose.model('Event', Event);

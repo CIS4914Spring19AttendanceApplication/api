@@ -17,7 +17,7 @@ var CheckIn = new mongoose.Schema({
         type: String,
         required: true
     },
-    location: {
+    event_id: {
         type: String,
         required: true
     },
@@ -25,7 +25,7 @@ var CheckIn = new mongoose.Schema({
         type: Date,
         default: Date.now,
         required: true
-    },
+    }
 });
 
 module.exports = mongoose.model('CheckIn', CheckIn);
