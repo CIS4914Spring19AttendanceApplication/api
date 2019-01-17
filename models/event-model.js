@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-var OrgReq = require('./organization-req-model').schema;
+var AdditionalField = require('./additional-field-model').schema;
+
 
 var Event = new mongoose.Schema({
     organization_id: {
@@ -39,6 +40,7 @@ var Event = new mongoose.Schema({
         type: String,
         required: true
     }],
+    event_additional_fields: [AdditionalField],
     created_by: {
         type: String,
         required: true

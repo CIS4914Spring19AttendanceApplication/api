@@ -2,16 +2,20 @@ var mongoose = require('mongoose');
 var OrgReq = require('./organization-req-model').schema;
 
 var Organization = mongoose.Schema({
-    organization_name: {
+    org_name: {
         type: String,
         required: true
     },
-    reqs: [OrgReq],
-    users: [{
+    org_reqs: [OrgReq],
+    org_users: [{
         type: String,
         required: false
     }],
-    date_created: {
+    org_qr_code: {
+        type: String,
+        required: true
+    },
+    org_date_created: {
         type: Date,
         required: true,
         default: Date.now

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var AdditionalField = require('./additional-field-model').schema;
 
 var CheckIn = new mongoose.Schema({
     email: {
@@ -21,6 +22,11 @@ var CheckIn = new mongoose.Schema({
         type: String,
         required: true
     },
+    organization_id: {
+        type: String,
+        required: true
+    },
+    additional_fields: [AdditionalField],
     created_date: {
         type: Date,
         default: Date.now,

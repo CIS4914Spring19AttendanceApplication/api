@@ -8,6 +8,8 @@ app.use(express.json());
 
 let eventRouter = require("./routes/event-route");
 let userRouter = require("./routes/user-route");
+let orgRouter = require("./routes/organization-route");
+
 
 if (process.env.NODE_ENV !== 'production') {
     var dotenv = require('dotenv').load();
@@ -27,6 +29,8 @@ app.listen(port, function () {
 
 app.use('/api/event', eventRouter);
 app.use('/api/user', userRouter);
+app.use('/api/org', orgRouter);
+
 
 app.get('*', (req, res) => res.send(''));
 
