@@ -10,7 +10,7 @@ exports.createEvent = function(req, res) {
     {
       type: "event",
       event_id: newEvent._id,
-      additional_fields: newEvent.event_additional_fields
+      additional_fields: newEvent.additional_fields
     }
   ];
   QRCode.toDataURL(JSON.stringify(qrData))
@@ -37,7 +37,7 @@ exports.updateEvent = function(req, res) {
     {
       "type:": "event",
       event_id: reqEvent._id,
-      event_name: reqEvent.event_name,
+      event_name: reqEvent.name,
       additional_fields: reqEvent.event_additional_fields
     }
   ];
@@ -48,11 +48,11 @@ exports.updateEvent = function(req, res) {
         { _id: req.body._id.$oid },
         {
           $set: {
-            event_name: reqEvent.event_name,
-            event_reqs: reqEvent.event_reqs,
-            event_additional_fields: reqEvent.event_additional_fields,
-            event_date: reqEvent.event_date,
-            event_qr_code: document
+            name: reqEvent.name,
+            point_categories: reqEvent.point_categories,
+            additional_fields: reqEvent.additional_fields,
+            date: reqEvent.date,
+            qr_code: document
           }
         },
         { new: true }
@@ -94,10 +94,10 @@ exports.toggleAttendance = function(req, res) {
   Event.findOne({ _id: req.body._id.$oid })
     .then(document => {
       updatedEvent = new Event(document);
-      updatedEvent.event_toggle = !updatedEvent.event_toggle;
+      updatedEvent.attendance_toggle = !updatedEvent.attendance_toggle;
       Event.findOneAndUpdate(
         { _id: req.body._id.$oid },
-        { $set: { event_toggle: updatedEvent.event_toggle } },
+        { $set: { attendance_toggle: updatedEvent.attendance_toggle } },
         { new: true }
       )
         .then(document => {
@@ -118,11 +118,11 @@ exports.toggleLocationEnforce = function(req, res) {
   Event.findOne({ _id: req.body._id.$oid })
     .then(document => {
       updatedEvent = new Event(document);
-      updatedEvent.event_location_enforce = !updatedEvent.event_location_enforce;
+      updatedEvent.location_enforce = !updatedEvent.location_enforce;
       Event.findOneAndUpdate(
         { _id: req.body._id.$oid },
         {
-          $set: { event_location_enforce: updatedEvent.event_location_enforce }
+          $set: { location_enforce: updatedEvent.location_enforce }
         },
         { new: true }
       )
