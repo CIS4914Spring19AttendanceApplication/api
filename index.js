@@ -35,7 +35,7 @@ app.use('/api/org', orgRouter);
 app.get('*', (req, res) => res.send(''));
 
 setInterval(function() {
-    http.get("http://attendanceapp-api.herokuapp.com/");
+    http.get("http://rollcall-api.herokuapp.com");
     var d = new Date();
     console.log("Keep-alive: " + d.getMonth() + "/" +d.getDate() + " | " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
 }, 60000); 
