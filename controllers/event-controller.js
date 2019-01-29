@@ -15,7 +15,7 @@ exports.createEvent = function(req, res) {
   ];
   QRCode.toDataURL(JSON.stringify(qrData))
     .then(document => {
-      newEvent.event_qr_code = document;
+      newEvent.qr_code = document;
       newEvent
         .save()
         .then(document => {
