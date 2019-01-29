@@ -18,9 +18,12 @@
   },
   "homepage": "https://github.com/CIS4914Spring19AttendanceApplication/api#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
     "http": "0.0.0",
+    "jwks-rsa": "^1.3.0",
     "mongoose": "^5.4.3",
     "qrcode": "^1.3.3",
     "underscore": "^1.9.1"
