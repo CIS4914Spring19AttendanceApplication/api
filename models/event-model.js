@@ -1,44 +1,44 @@
 var mongoose = require('mongoose');
-var OrgReq = require('./organization-req-model').schema;
+var AdditionalField = require('./additional-field-model').schema;
+var PointCategory = require('./point-category').schema;
+
 
 var Event = new mongoose.Schema({
-    organization_id: {
+    org_id: {
         type: String,
         required: true
     },
-    event_name: {
+    name: {
         type: String,
         required: true
     },
-    event_date: {
+    date: {
         type: String,
         required: true
     },
-    event_location: {
+    location: {
         type: String,
         required: true
     },
-    event_qr_code: {
+    qr_code: {
         type: String,
         required: true
     },
-    event_location_enforce: {
+    location_enforce: {
         type: Boolean,
         required: true
     },
-    event_location_radius: {
+    location_radius: {
         type: String,
         required: true
     },
-    event_toggle: {
+    attendance_toggle: {
         type: Boolean,
         default: false,
         required: true
     },
-    event_reqs: [{
-        type: String,
-        required: true
-    }],
+    point_categories: [PointCategory],
+    additional_fields: [AdditionalField],
     created_by: {
         type: String,
         required: true

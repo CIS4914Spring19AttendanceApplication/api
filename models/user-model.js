@@ -22,10 +22,6 @@ var User = mongoose.Schema({
     year: {
         type: String,
         required: true
-    },
-    hashed_pass: {
-        type: String, 
-        required: false
     }
 });
 

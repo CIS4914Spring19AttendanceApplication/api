@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 
-var OrgReq = mongoose.Schema({
-    req_name: {
+var PointCategory = mongoose.Schema({
+    name: {
         type: String,
         required: true
     },
-    req_points: {
+    points: {
         type: Number,
-        required: true
+        required: false
     },
     date_created: {
         type: Date,
@@ -16,4 +16,4 @@ var OrgReq = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('OrgReq', OrgReq);
+module.exports = mongoose.model('PointCategory', PointCategory);
