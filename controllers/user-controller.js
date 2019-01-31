@@ -5,7 +5,7 @@ exports.onboardCheck = function(req, res) {
   User.findOne({ email: req.body.email })
     .then(document => {
       if (document) {
-        res.send(document);
+        res.status(200).json({message: "User Exists"});
       } else {
         res.status(404).json({ message: "User Not Found" });
       }
