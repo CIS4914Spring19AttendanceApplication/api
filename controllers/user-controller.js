@@ -2,7 +2,8 @@ var mongoose = require("mongoose");
 var User = require("../models/user-model");
 
 exports.onboardCheck = function(req, res) {
-  User.findOne({ email: req.body.email })
+  console.log(req);
+  User.findOne({ email: req.params.email })
     .then(document => {
       if (document) {
         res.send(document);
