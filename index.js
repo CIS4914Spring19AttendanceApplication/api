@@ -33,9 +33,8 @@ const authCheck = jwt({
 if (process.env.NODE_ENV !== 'production') {
     var dotenv = require('dotenv').load();
 }
-else {
-    app.use(authCheck);
-}
+
+app.use(authCheck);
 
 mongoose.connect('mongodb://seniorproject:' + process.env.MONGO_PWD + '@ds253324.mlab.com:53324/heroku_r3cbzbjn', {useNewUrlParser: true});
 var db = mongoose.connection;
