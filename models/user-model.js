@@ -16,7 +16,7 @@ var User = mongoose.Schema({
         required: true
     },
     created_date: {
-        type: String,
+        type: Date,
         required: true
     },
     year: {
