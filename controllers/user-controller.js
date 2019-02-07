@@ -17,15 +17,30 @@ exports.onboardCheck = function(req, res) {
 };
 
 exports.registerUser = function(req, res) {
-  var newUser = new User(req.body);
-  newUser.created_date = Date.now();
-  newUser
-    .save()
-    .then(document => {
-      res.status(201).json(document);
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(400).json(err.message);
-    });
+
+  User.findOne({ email: req.body.email })
+  .then(document => {
+    if (document) {
+      res.status(409).json(document);
+    } else {
+      var newUser = new User(req.body);
+      newUser.created_date = Date.now();
+      newUser
+        .save()
+        .then(document => {
+          res.status(201).json(document);
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(400).json(err.message);
+        });
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
+
+
+
 };
