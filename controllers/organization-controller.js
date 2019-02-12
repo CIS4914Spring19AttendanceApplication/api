@@ -11,24 +11,38 @@ exports.createOrg = function(req, res) {
     {
       type: "org",
       org_id: newOrg._id,
-      org_name: newOrg.org_name
+      org_name: newOrg.name
     }
   ];
-  QRCode.toDataURL(JSON.stringify(qrData))
+  Org.findOne({ name: req.body.name })
     .then(document => {
-      newOrg.org_qr_code = document;
-      newOrg
-        .save()
-        .then(document => {
-          res.status(201).json(document);
-        })
-        .catch(err => {
-          console.error(err);
-          res.status(400).json(err.message);
-        });
+      if (document) {
+        var duplicateMessage = {
+          message:
+            "Organization name already exists, please choose another or delete the organization if you are enrolled in it."
+        };
+        res.status(409).json(duplicateMessage);
+      } else {
+        QRCode.toDataURL(JSON.stringify(qrData))
+          .then(document => {
+            newOrg.qr_code = document;
+            newOrg
+              .save()
+              .then(document => {
+                res.status(201).json(document);
+              })
+              .catch(err => {
+                console.error(err);
+                res.status(500).json(err.message);
+              });
+          })
+          .catch(err => {
+            res.status(500).json(err.message);
+          });
+      }
     })
     .catch(err => {
-      res.status(400).json(err.message);
+      res.status(500).json(err.message);
     });
 };
 

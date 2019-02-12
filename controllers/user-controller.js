@@ -4,6 +4,7 @@ var User = require("../models/user-model");
 exports.onboardCheck = function(req, res) {
   User.findOne({ email: req.params.email })
     .then(document => {
+      console.log(req.params.email);
       if (document) {
         res.status(200).json(document);
       } else {
@@ -14,6 +15,18 @@ exports.onboardCheck = function(req, res) {
       console.error(err);
       res.status(400).json(err.message);
     });
+};
+
+exports.updateUser = function(req, res) {
+
+  User.findOneAndUpdate({email: req.body.email}, req.body)
+  .then(doc => {
+    res.status(200).json(doc);
+  })
+  .catch(err => {
+    res.status(500).json(err.message);
+  });
+
 };
 
 exports.registerUser = function(req, res) {
