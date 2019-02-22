@@ -6,10 +6,10 @@ var Enrollment = mongoose.Schema({
         type: String,
         required: true
     },
-    roles: [{
+    role: {
         type: String,
         required: true
-    }]
+    }
 });
 
 module.exports = mongoose.model('Enrollment', Enrollment);
