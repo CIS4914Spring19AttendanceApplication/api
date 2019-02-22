@@ -6,9 +6,15 @@ var Enrollment = mongoose.Schema({
         type: String,
         required: true
     },
-    role: {
-        type: String,
-        required: true
+    board: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    member: {
+        type: Boolean,
+        required: true,
+        default: true
     }
 });
 
