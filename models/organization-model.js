@@ -7,7 +7,7 @@ var Organization = mongoose.Schema({
         required: true
     },
     point_categories: [PointCategory],
-    members: [{
+    member: [{
         type: String,
         required: false
     }],
