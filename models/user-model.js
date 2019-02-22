@@ -15,6 +15,10 @@ var User = mongoose.Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        required: true
+    },
     created_date: {
         type: Date,
         required: true
