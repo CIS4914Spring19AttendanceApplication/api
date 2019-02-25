@@ -2,6 +2,8 @@ var mongoose = require("mongoose");
 var Event = require("../models/event-model");
 var QRCode = require("qrcode");
 var CheckIn = require("../models/checkin-model");
+var Org = require("../models/organization-model");
+var User = require("../models/user-model");
 
 exports.createEvent = function(req, res) {
   var newEvent = new Event(req.body);
@@ -145,8 +147,90 @@ exports.toggleLocationEnforce = function(req, res) {
     });
 };
 
+exports.orgEnroll = function(req, res, next){
+  Org.findById({_id: req.body.org_id}).then(document => {
+    if(document){
+      //search if the person is in the organization
+      if(document.member.indexOf(req.body.email) == -1){
+        document.member.push(req.body.email);
+        document.save();
+
+        //add the organization to the user's model
+        User.findOne({email: req.body.email}).then(document => {
+          //check if the user already has the org enrolled
+          
+          //if not, add the enrollement to the user document
+        });
+      }
+      next();
+    }
+    else{
+      res.status(404).json({ message: "The organization is invalid." });
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
+};
+
+exports.checkAttendanceToggle = function(req, res, next){
+  Event.findById({_id: req.body.event_id}).then(document => {
+    if(document){
+      if(document.attendance_toggle){
+        next();
+      }
+      else{
+        res.status(403).json({ message: "This event is not open for sign in right now."});
+      }
+    }
+    else{
+      res.status(404).json({ message: "The event is invalid."});
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
+};
+
+exports.checkLocation = function(req, res, next){
+  Event.findById({_id: req.body.event_id}).then(document => {
+    if(document.location_enforce){
+      //compare the passed in location radius
+      if(false){
+        res.status(403).json({message: "You are not in the proper location to sign in to this event."});
+      }
+    }
+    next();
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
+};
+
 exports.checkIn = function(req, res) {
-  //needs to check location
-  //needs to record req in check in?
-  //needs to record organization in check in?
+  CheckIn.findOne({event_id: req.body.event_id, email: req.body.email}).then(document => {
+    if(document){
+      res.status().json({message: "You have already signed in to this event."});
+    }
+    else{
+      var newCheckIn = new checkIn(req.body);
+      newCheckIn.created_date = Date.now();
+      newCheckIn
+          .save()
+          .then(document => {
+            res.status(201).json(document);
+          })
+          .catch(err => {
+            console.error(err);
+            res.status(400).json(err.message);
+          });
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
 };
