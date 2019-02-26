@@ -17,16 +17,39 @@ exports.onboardCheck = function(req, res) {
     });
 };
 
+//need to pass email, and org name through res.locals
+exports.addBoardEnrollment = function(req, res) {
+  var conditions = {
+    email: res.locals.email
+  };
+  console.log(res.locals);
+  var org_name = res.locals.org.name;
+  var enrollment = {
+    organization: org_name, board: true 
+  };
+
+  User.findOneAndUpdate(
+    { email: res.locals.email },
+    { $push: { enrollments: enrollment } },
+    function(error, success) {
+      if (error) {
+        console.log(error);
+        res.send(error);
+      } else {
+        res.send(success);
+      }
+    }
+  );
+};
+
 exports.updateUser = function(req, res) {
-
-  User.findOneAndUpdate({email: req.body.email}, req.body)
-  .then(doc => {
-    res.status(200).json(doc);
-  })
-  .catch(err => {
-    res.status(500).json(err.message);
-  });
-
+  User.findOneAndUpdate({ email: req.body.email }, req.body)
+    .then(doc => {
+      res.status(200).json(doc);
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
 };
 
 exports.registerUser = function(req, res) {
@@ -58,11 +81,11 @@ exports.getUserProfile = function(req, res) {
   console.log(req.params.email);
   User.findOne({ email: req.params.email })
     .then(document => {
-        if (document) {
-          res.status(200).json(document);
-        } else {
-          res.status(404).json({ message: "User Not Found" });
-        }
+      if (document) {
+        res.status(200).json(document);
+      } else {
+        res.status(404).json({ message: "User Not Found" });
+      }
     })
     .catch(err => {
       console.error(err);
