@@ -3,8 +3,9 @@ var _ = require("underscore");
 var Org = require("../models/organization-model");
 var CheckIn = require("../models/checkin-model");
 var QRCode = require("qrcode");
+var User = require("../models/user-model");
 
-exports.createOrg = function(req, res) {
+exports.createOrg = function(req, res, next) {
   var newOrg = new Org(req.body);
   console.log(newOrg);
   var qrData = [
@@ -17,6 +18,7 @@ exports.createOrg = function(req, res) {
   Org.findOne({ name: req.body.name })
     .then(document => {
       if (document) {
+        console.log("duplicate!")
         var duplicateMessage = {
           message:
             "Organization name already exists, please choose another or delete the organization if you are enrolled in it."
@@ -26,10 +28,16 @@ exports.createOrg = function(req, res) {
         QRCode.toDataURL(JSON.stringify(qrData))
           .then(document => {
             newOrg.qr_code = document;
+            newOrg.board = [req.body.email];
+            newOrg.member = [req.body.email];
             newOrg
               .save()
               .then(document => {
-                res.status(201).json(document);
+                res.locals.email = req.body.email;
+                res.locals.body = req.body;
+                res.locals.org = document;
+                next();
+                                          
               })
               .catch(err => {
                 console.error(err);
