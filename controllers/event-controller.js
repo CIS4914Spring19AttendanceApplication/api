@@ -156,11 +156,21 @@ exports.orgEnroll = function(req, res, next){
         document.save();
 
         //add the organization to the user's model
-        User.findOne({email: req.body.email}).then(document => {
-          //check if the user already has the org enrolled
-          
-          //if not, add the enrollement to the user document
-        });
+        var conditions = {
+          email: req.body.email,
+          'enrollments.organization': {$ne: document.name}
+        };
+        var enrollment = {
+          organization: document.name, member: true
+        };
+        User.findOneAndUpdate(conditions, {$push: {enrollments: enrollment}},
+          function(error){
+            if(error){
+              console.log(error);
+              res.status(400).json(error);
+            }
+          }
+        )
       }
       next();
     }
@@ -213,7 +223,7 @@ exports.checkLocation = function(req, res, next){
 exports.checkIn = function(req, res) {
   CheckIn.findOne({event_id: req.body.event_id, email: req.body.email}).then(document => {
     if(document){
-      res.status().json({message: "You have already signed in to this event."});
+      res.status(403).json({message: "You have already signed in to this event."});
     }
     else{
       var newCheckIn = new checkIn(req.body);
