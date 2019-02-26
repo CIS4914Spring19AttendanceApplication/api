@@ -226,7 +226,7 @@ exports.checkIn = function(req, res) {
       res.status(403).json({message: "You have already signed in to this event."});
     }
     else{
-      var newCheckIn = new checkIn(req.body);
+      var newCheckIn = new CheckIn(req.body);
       newCheckIn.created_date = Date.now();
       newCheckIn
           .save()
