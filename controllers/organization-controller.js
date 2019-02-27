@@ -4,6 +4,40 @@ var Org = require("../models/organization-model");
 var CheckIn = require("../models/checkin-model");
 var QRCode = require("qrcode");
 var User = require("../models/user-model");
+//, "enrollments.organization": activeOrg.name
+//, enrollments: {$elemMatch: {organization: activeOrg.name}}
+exports.setActiveOrg = function(req, res) {
+  activeOrg = res.locals.org;
+  userEmail = res.locals.email;
+  console.log(userEmail);
+  User.updateMany(
+    { email: userEmail },
+    { $set: { "enrollments.$[].active": false } },
+    { multi: true }
+  )
+    .then(doc => {
+      User.update(
+        {
+          email: userEmail,
+          enrollments: { $elemMatch: { organization: activeOrg.name } }
+        },
+        {
+          $set: { "enrollments.$.active": true }
+        }
+      )
+        .then(doc => {
+          res.status(201).json(doc);
+        })
+        .catch(err => {
+          console.log(err);
+          res.status(500).json(err);
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+};
 
 exports.createOrg = function(req, res, next) {
   var newOrg = new Org(req.body);
@@ -18,7 +52,7 @@ exports.createOrg = function(req, res, next) {
   Org.findOne({ name: req.body.name })
     .then(document => {
       if (document) {
-        console.log("duplicate!")
+        console.log("duplicate!");
         var duplicateMessage = {
           message:
             "Organization name already exists, please choose another or delete the organization if you are enrolled in it."
@@ -37,7 +71,6 @@ exports.createOrg = function(req, res, next) {
                 res.locals.body = req.body;
                 res.locals.org = document;
                 next();
-                                          
               })
               .catch(err => {
                 console.error(err);

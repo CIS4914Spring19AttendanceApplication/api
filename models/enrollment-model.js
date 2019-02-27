@@ -15,6 +15,11 @@ var Enrollment = mongoose.Schema({
         type: Boolean,
         required: true,
         default: true
+    },
+    active: {
+        type: Boolean,
+        required: true,
+        default: true
     }
 });
 

@@ -18,11 +18,7 @@ exports.onboardCheck = function(req, res) {
 };
 
 //need to pass email, and org name through res.locals
-exports.addBoardEnrollment = function(req, res) {
-  var conditions = {
-    email: res.locals.email
-  };
-  console.log(res.locals);
+exports.addBoardEnrollment = function(req, res, next) {
   var org_name = res.locals.org.name;
   var enrollment = {
     organization: org_name, board: true 
@@ -36,7 +32,7 @@ exports.addBoardEnrollment = function(req, res) {
         console.log(error);
         res.send(error);
       } else {
-        res.send(success);
+        next();
       }
     }
   );

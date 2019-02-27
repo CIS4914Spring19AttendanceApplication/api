@@ -13,10 +13,11 @@ exports.createEvent = function(req, res) {
       type: "event",
       org_id: req.body.org_id,
       event_id: newEvent._id,
-      event_name: newEvent_name,
-      event_type: newEvent_point_categories,
-      location_enforce: location_enforce,
-      location_radius: location_radius,
+      event_name: newEvent.name,
+      event_type: newEvent.point_categories,
+      location_enforce: newEvent.location_enforce,
+      location_radius: newEvent.location_radius,
+      point_categories: newEvent.point_categories,
       additional_fields: newEvent.additional_fields
     }
   ];
