@@ -11,12 +11,6 @@ router.post('/update', event_controller.updateEvent);
 
 router.post('/delete', event_controller.deleteEvent);
 
-router.post('/checkin', event_controller.orgEnroll);
-
-router.post('/checkin', event_controller.checkAttendanceToggle);
-
-router.post('/checkin', event_controller.checkLocation);
-
-router.post('/checkin', event_controller.checkIn);
+router.post('/checkin', event_controller.orgEnroll,event_controller.checkAttendanceToggle,event_controller.checkLocation,event_controller.checkIn);
 
 module.exports = router;
