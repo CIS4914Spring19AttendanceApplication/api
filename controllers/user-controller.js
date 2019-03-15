@@ -1,10 +1,21 @@
 var mongoose = require("mongoose");
 var User = require("../models/user-model");
+var _ = require('lodash');
 
 exports.getUserEnrollments = function(req, res) {
   User.findOne({ email: req.params.email })
     .then(doc => {
       res.status(201).json(doc.enrollments);
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
+};
+
+exports.getUserBoardEnrollments = function(req, res) {
+  User.findOne({ email: req.params.email })
+    .then(doc => {
+      res.status(201).json(_.reject(doc.enrollments, ['active', false]));
     })
     .catch(err => {
       res.status(500).json(err.message);

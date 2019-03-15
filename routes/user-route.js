@@ -7,5 +7,6 @@ router.post('/update', user_controller.updateUser);
 router.get('/onboardcheck/:email', user_controller.onboardCheck);
 router.get('/get/:email', user_controller.getUserProfile);
 router.get('/get/enrollments/:email', user_controller.getUserEnrollments);
+router.get('/get/boardenrollments/:email', user_controller.getUserBoardEnrollments);
 
 module.exports = router;
