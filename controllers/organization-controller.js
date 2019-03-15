@@ -184,3 +184,29 @@ exports.updateOrg = function(req, res) {
   //       res.status(400).json(err.message);
   //     });
 };
+
+exports.addBoard = function(req, res, next) {
+  Org.findById({_id: req.body.org_id}).then(document => {
+    if(document){
+      //check if the user is already enrolled as board
+      if(document.board.indexOf(req.body.email) == -1){
+        document.board.push(req.body.email);
+        document.save();
+
+        res.locals.email = req.body.email;
+        res.locals.body = req.body;
+        res.locals.org = document;
+        next();
+      }
+      else{
+        res.status(404).json({message: "You are already enrolled as a board member in this organizaiton."});
+      }
+    }
+    else{
+      res.status(404).json({ message: "The organization is invalid." });
+    }
+  }).catch(err => {
+    console.error(err);
+    res.status(400).json(err.message);
+  });
+};
