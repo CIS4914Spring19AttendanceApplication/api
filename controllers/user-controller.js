@@ -1,6 +1,16 @@
 var mongoose = require("mongoose");
 var User = require("../models/user-model");
 
+exports.getUserEnrollments = function(req, res) {
+  User.findOne({ email: req.params.email })
+    .then(doc => {
+      res.status(201).json(doc.enrollments);
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
+};
+
 exports.onboardCheck = function(req, res) {
   User.findOne({ email: req.params.email })
     .then(document => {
@@ -13,7 +23,7 @@ exports.onboardCheck = function(req, res) {
     })
     .catch(err => {
       console.error(err);
-      res.status(400).json(err.message);
+      res.status(500).json(err.message);
     });
 };
 
@@ -21,7 +31,8 @@ exports.onboardCheck = function(req, res) {
 exports.addBoardEnrollment = function(req, res, next) {
   var org_name = res.locals.org.name;
   var enrollment = {
-    organization: org_name, board: true 
+    organization: org_name,
+    board: true
   };
 
   User.findOneAndUpdate(

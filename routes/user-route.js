@@ -6,4 +6,6 @@ router.post('/registeruser', user_controller.registerUser);
 router.post('/update', user_controller.updateUser);
 router.get('/onboardcheck/:email', user_controller.onboardCheck);
 router.get('/get/:email', user_controller.getUserProfile);
+router.get('/get/enrollments/:email', user_controller.getUserEnrollments);
+
 module.exports = router;

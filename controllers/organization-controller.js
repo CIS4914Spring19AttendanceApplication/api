@@ -87,6 +87,16 @@ exports.createOrg = function(req, res, next) {
     });
 };
 
+exports.getQR = function(req, res){
+  Org.findOne({ name: req.params.name })
+  .then(doc => {
+    res.status(201).json(doc.qr_code);
+  })
+  .catch(err => {
+    res.status(500).json(err.message);
+  });
+}
+
 exports.updateOrg = function(req, res) {
   const reqOrg = new Org(req.body);
   var qrData = [

@@ -6,4 +6,6 @@ router.post('/create', org_controller.createOrg, user_controller.addBoardEnrollm
 
 router.post('/update', org_controller.updateOrg);
 
+router.get('/qr/:name', org_controller.getQR);
+
 module.exports = router;
