@@ -15,7 +15,7 @@ exports.getUserEnrollments = function(req, res) {
 exports.getUserBoardEnrollments = function(req, res) {
   User.findOne({ email: req.params.email })
     .then(doc => {
-      res.status(201).json(_.reject(doc.enrollments, ['active', false]));
+      res.status(201).json(_.reject(doc.enrollments, ['board', false]));
     })
     .catch(err => {
       res.status(500).json(err.message);
