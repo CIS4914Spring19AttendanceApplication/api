@@ -2,6 +2,27 @@ var mongoose = require("mongoose");
 var User = require("../models/user-model");
 var CheckIn = require("../models/checkin-model");
 var Event = require("../models/event-model");
+var _ = require('lodash');
+
+exports.getUserEnrollments = function(req, res) {
+  User.findOne({ email: req.params.email })
+    .then(doc => {
+      res.status(201).json(doc.enrollments);
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
+};
+
+exports.getUserBoardEnrollments = function(req, res) {
+  User.findOne({ email: req.params.email })
+    .then(doc => {
+      res.status(201).json(_.reject(doc.enrollments, ['board', false]));
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
+};
 
 exports.onboardCheck = function(req, res) {
   User.findOne({ email: req.params.email })
@@ -15,7 +36,7 @@ exports.onboardCheck = function(req, res) {
     })
     .catch(err => {
       console.error(err);
-      res.status(400).json(err.message);
+      res.status(500).json(err.message);
     });
 };
 
@@ -23,7 +44,8 @@ exports.onboardCheck = function(req, res) {
 exports.addBoardEnrollment = function(req, res, next) {
   var org_name = res.locals.org.name;
   var enrollment = {
-    organization: org_name, board: true 
+    organization: org_name,
+    board: true
   };
 
   User.findOneAndUpdate(
