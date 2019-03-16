@@ -1,5 +1,7 @@
 var mongoose = require("mongoose");
 var User = require("../models/user-model");
+var CheckIn = require("../models/checkin-model");
+var Event = require("../models/event-model");
 
 exports.onboardCheck = function(req, res) {
   User.findOne({ email: req.params.email })
@@ -87,4 +89,48 @@ exports.getUserProfile = function(req, res) {
       console.error(err);
       res.status(400).json(err.message);
     });
+};
+
+exports.getCheckInHistory = function(req, res, next){
+  CheckIn.find({ email : req.params.email })
+    .select({'event_id' : 1, '_id' : 0})
+    .then(document => {
+      if(document){
+        res.locals.checkIns = document;
+        next();
+      }
+      else{
+        res.status(404).json({message: "Error Retrieving Organizations"});
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(400).json(err.message);
+    });
+};
+
+exports.calculateOrgPoints = function(req, res, next){
+
+};
+
+exports.getEventHistory = function(req, res){
+  var events = [];
+  //loop through all of the check ins to save the events
+  res.locals.checkIns.forEach(function(ci){
+    Event.findById(ci["event_id"])
+      .select('org_name name location date point_categories')
+      .then(document => {
+        events.push(document);
+        //if all of the events are added
+        if(events.length == res.locals.checkIns.length){
+          //sort the events by org_name
+          events.sort((a, b) => a.org_name.localeCompare(b.org_name));
+          res.status(200).json(events);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(400).json(err.message);
+      });
+  });
 };

@@ -11,6 +11,7 @@ exports.createEvent = function(req, res) {
   var qrData = [
     {
       type: "event",
+      org_name: req.body.org_name,
       org_id: req.body.org_id,
       event_id: newEvent._id,
       event_name: newEvent.name,

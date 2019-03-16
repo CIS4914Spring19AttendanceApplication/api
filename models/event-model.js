@@ -4,6 +4,10 @@ var PointCategory = require('./point-category').schema;
 
 
 var Event = new mongoose.Schema({
+    org_name: {
+        type: String,
+        required: true
+    },
     org_id: {
         type: String,
         required: true

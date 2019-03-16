@@ -189,7 +189,7 @@ exports.addBoard = function(req, res, next) {
         next();
       }
       else{
-        res.status(404).json({message: "You are already enrolled as a board member in this organizaiton."});
+        res.status(404).json({message: "You are already enrolled as a board member in this organization."});
       }
     }
     else{
