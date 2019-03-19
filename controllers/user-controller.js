@@ -146,7 +146,7 @@ exports.getCheckInHistory = function(req, res, next) {
 
 exports.calculateOrgPoints = function(req, res, next) {};
 
-exports.getEventHistory = function(req, res) {
+exports.getEventHistory = function(req, res){
   var events = [];
   //loop through all of the check ins to save the events
   res.locals.checkIns.forEach(function(ci) {
