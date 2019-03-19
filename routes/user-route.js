@@ -10,4 +10,6 @@ router.get('/history/:email', user_controller.getCheckInHistory, user_controller
 router.get('/get/enrollments/:email', user_controller.getUserEnrollments);
 router.get('/get/boardenrollments/:email', user_controller.getUserBoardEnrollments);
 
+router.post('/set/activeorg', user_controller.setActiveOrg);
+router.get('/get/activeorg/:email', user_controller.getActiveOrg);
 module.exports = router;

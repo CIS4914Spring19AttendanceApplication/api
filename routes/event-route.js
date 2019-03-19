@@ -13,4 +13,6 @@ router.post('/delete', event_controller.deleteEvent);
 
 router.post('/checkin', event_controller.orgEnroll,event_controller.checkAttendanceToggle,event_controller.checkLocation,event_controller.checkIn);
 
+router.get('/get/byorg/:name', event_controller.getEventsByOrg);
+
 module.exports = router;

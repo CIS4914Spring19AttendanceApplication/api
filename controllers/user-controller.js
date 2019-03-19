@@ -2,7 +2,21 @@ var mongoose = require("mongoose");
 var User = require("../models/user-model");
 var CheckIn = require("../models/checkin-model");
 var Event = require("../models/event-model");
-var _ = require('lodash');
+var _ = require("lodash");
+
+exports.getActiveOrg = function(req, res) {
+  User.findOne({ email: req.params.email })
+    .then(doc => {
+      console.log(req.params.email);
+      res
+        .status(201)
+        .json(_.reject(doc.enrollments, ["active", false]));
+
+    })
+    .catch(err => {
+      res.status(500).json(err.message);
+    });
+};
 
 exports.getUserEnrollments = function(req, res) {
   User.findOne({ email: req.params.email })
@@ -17,7 +31,7 @@ exports.getUserEnrollments = function(req, res) {
 exports.getUserBoardEnrollments = function(req, res) {
   User.findOne({ email: req.params.email })
     .then(doc => {
-      res.status(201).json(_.reject(doc.enrollments, ['board', false]));
+      res.status(201).json(_.reject(doc.enrollments, ["board", false]));
     })
     .catch(err => {
       res.status(500).json(err.message);
@@ -113,16 +127,15 @@ exports.getUserProfile = function(req, res) {
     });
 };
 
-exports.getCheckInHistory = function(req, res, next){
-  CheckIn.find({ email : req.params.email })
-    .select({'event_id' : 1, '_id' : 0})
+exports.getCheckInHistory = function(req, res, next) {
+  CheckIn.find({ email: req.params.email })
+    .select({ event_id: 1, _id: 0 })
     .then(document => {
-      if(document){
+      if (document) {
         res.locals.checkIns = document;
         next();
-      }
-      else{
-        res.status(404).json({message: "Error Retrieving Organizations"});
+      } else {
+        res.status(404).json({ message: "Error Retrieving Organizations" });
       }
     })
     .catch(err => {
@@ -131,20 +144,18 @@ exports.getCheckInHistory = function(req, res, next){
     });
 };
 
-exports.calculateOrgPoints = function(req, res, next){
+exports.calculateOrgPoints = function(req, res, next) {};
 
-};
-
-exports.getEventHistory = function(req, res){
+exports.getEventHistory = function(req, res) {
   var events = [];
   //loop through all of the check ins to save the events
-  res.locals.checkIns.forEach(function(ci){
+  res.locals.checkIns.forEach(function(ci) {
     Event.findById(ci["event_id"])
-      .select('org_name name location date point_categories')
+      .select("org_name name location date point_categories")
       .then(document => {
         events.push(document);
         //if all of the events are added
-        if(events.length == res.locals.checkIns.length){
+        if (events.length == res.locals.checkIns.length) {
           //sort the events by org_name
           events.sort((a, b) => a.org_name.localeCompare(b.org_name));
           res.status(200).json(events);
@@ -155,4 +166,42 @@ exports.getEventHistory = function(req, res){
         res.status(400).json(err.message);
       });
   });
+};
+
+exports.setActiveOrg = function(req, res) {
+  if (res.locals.org) {
+    activeOrg = res.locals.org.name;
+    userEmail = res.locals.email;
+  } else {
+    activeOrg = req.body.org_name;
+    userEmail = req.body.user_email;
+  }
+  console.log("orgname: " + activeOrg);
+  User.updateMany(
+    { email: userEmail },
+    { $set: { "enrollments.$[].active": false } },
+    { multi: true }
+  )
+    .then(doc => {
+      User.update(
+        {
+          email: userEmail,
+          enrollments: { $elemMatch: { organization: activeOrg } }
+        },
+        {
+          $set: { "enrollments.$.active": true }
+        }
+      )
+        .then(doc => {
+          res.status(201).json(doc);
+        })
+        .catch(err => {
+          console.log(err);
+          res.status(500).json(err);
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 };
