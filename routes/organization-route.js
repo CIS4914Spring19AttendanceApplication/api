@@ -8,8 +8,10 @@ router.post('/addBoard', org_controller.addBoard, user_controller.addBoardEnroll
 
 router.post('/update', org_controller.updateOrg);
 
-router.get('/qr/:name', org_controller.getQR);
+router.get('/get/qr/:name', org_controller.getQR);
 
 router.get('/activate/:name', org_controller.getQR);
+
+router.get('/get/pointcategories/:name', org_controller.getPointCategories);
 
 module.exports = router;
