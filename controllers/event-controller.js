@@ -5,6 +5,17 @@ var CheckIn = require("../models/checkin-model");
 var Org = require("../models/organization-model");
 var User = require("../models/user-model");
 
+exports.getEventsByOrg = function(req, res) {
+  console.log(req.params.name);
+  Event.findById({name: req.params.name})
+  .then(doc =>{
+    res.status(201).json(document);
+  })
+  .catch(err => {
+    res.status(400).json(err.message);
+  })
+};
+
 exports.createEvent = function(req, res) {
   var newEvent = new Event(req.body);
   console.log(newEvent);
