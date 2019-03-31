@@ -8,7 +8,7 @@ var _ = require('lodash');
 exports.getActiveOrg = function(req, res) {
     User.findOne({ email: req.params.email })
         .then(doc => {
-            console.log(req.params.email);
+            console.log(doc[0]);
             res
                 .status(201)
                 .json(_.reject(doc.enrollments, ["active", false]));
@@ -22,6 +22,7 @@ exports.getActiveOrg = function(req, res) {
 exports.getUserEnrollments = function(req, res) {
     User.findOne({ email: req.params.email })
         .then(doc => {
+            console.log(doc);
             res.status(201).json(doc.enrollments);
         })
         .catch(err => {
@@ -59,8 +60,11 @@ exports.onboardCheck = function(req, res) {
 //need to pass email, and org name through res.locals
 exports.addBoardEnrollment = function(req, res, next) {
     var org_name = res.locals.org.name;
+    var org_id = res.locals.org._id;
+
     var enrollment = {
         organization: org_name,
+        organization_id: org_id,
         board: true
     };
 

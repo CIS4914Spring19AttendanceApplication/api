@@ -7,7 +7,8 @@ var PointCategory = mongoose.Schema({
     },
     points: {
         type: Number,
-        required: false
+        required: false,
+        default: 1
     },
     date_created: {
         type: Date,

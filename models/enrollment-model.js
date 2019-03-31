@@ -6,6 +6,10 @@ var Enrollment = mongoose.Schema({
         type: String,
         required: true
     },
+    organization_id: {
+        type: String,
+        required: false
+    },
     board: {
         type: Boolean,
         required: true,
