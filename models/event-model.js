@@ -8,28 +8,19 @@ var Event = new mongoose.Schema({
         type: String,
         required: true
     },
+    org_id: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
     },
     date: {
-        type: Date,
-        required: true,
-        default: Date.now
+        type: String,
+        required: true
     },
     location: {
-        type: String,
-        required: true
-    },
-    location_address: {
-        type: String,
-        required: true
-    },
-    location_lat: {
-        type: String,
-        required: true
-    },
-    location_lng: {
         type: String,
         required: true
     },
