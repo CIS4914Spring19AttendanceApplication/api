@@ -8,6 +8,10 @@ var Event = new mongoose.Schema({
         type: String,
         required: true
     },
+    org_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
     name: {
         type: String,
         required: true
