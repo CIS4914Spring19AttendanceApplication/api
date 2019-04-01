@@ -8,6 +8,43 @@ var __ = require("lodash");
 //, "enrollments.organization": activeOrg.name
 //, enrollments: {$elemMatch: {organization: activeOrg.name}}
 
+exports.getOrgMemberCount = function(req, res, next) {
+    Org.findOne({ _id: res.locals.org_id }, 'member')
+        .then(doc => {
+            User.find({ email: { $in: doc.member } }, 'first_name last_name phone year')
+                .then(members => {
+                    res.locals.members = members;
+                    var groupedTotal = _.groupBy(members, 'year');
+                    var groupedAttended = _.groupBy(res.locals.membersAttended, 'year');
+                    var freshmanCounts = {
+                        attended: groupedAttended.Freshman,
+                        total: groupedTotal.Freshman
+                    }
+                    var sophomoreCounts = {
+                        attended: groupedAttended.Sophomore,
+                        total: groupedTotal.Sophomore
+                    }
+                    var juniorCounts = {
+                        attended: groupedAttended.Junior,
+                        total: groupedTotal.Junior
+                    }
+                    var seniorCounts = {
+                        attended: groupedAttended.Senior,
+                        total: groupedTotal.Senior
+                    }
+                    var totalSoph = groupedTotal.Sophomore;
+                    var totalJun = groupedTotal.Junior;
+                    var totalSen = groupedTotal.Senior;
+
+
+                    res.status(200).json({ attended: res.locals.membersAttended, total: members, freshman: freshmanCounts, sophomore: sophomoreCounts, junior: juniorCounts, senior: seniorCounts });
+                })
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+        });
+};
+
 
 exports.createOrg = function(req, res, next) {
     var newOrg = new Org(req.body);

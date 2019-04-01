@@ -6,13 +6,50 @@ var Org = require("../models/organization-model");
 var User = require("../models/user-model");
 var geolib = require("geolib");
 
-exports.getEventsByOrg = function(req, res) {
-    Event.find({ org: req.params.org })
+exports.getEventName = function(req, res) {
+    Event.findById(req.params.id, 'name additional_fields')
         .then(doc => {
             res.status(201).json(doc);
         })
         .catch(err => {
+            res.status(500).json(err.message);
+        });
+}
+
+exports.getEventQR = function(req, res) {
+    Event.findById(req.params.id, 'org_name org_id name point_categories location_enforce location_radius additional_fields')
+        .then(doc => {
+            console.log(doc);
+            var qrData = [{
+                type: "event",
+                org_name: doc.org_name,
+                org_id: doc.org_id,
+                event_id: doc._id,
+                event_name: doc.name,
+                location_enforce: doc.location_enforce,
+                location_radius: doc.location_radius,
+                point_categories: doc.point_categories,
+                additional_fields: doc.additional_fields
+            }];
+            QRCode.toDataURL(JSON.stringify(qrData))
+                .then(qr => {
+                    res.status(201).json({ org_name: doc.org_name, name: doc.name, qr_code: qr });
+                }).catch(err => {
+
+                });
+        })
+        .catch(err => {
             res.status(400).json(err.message);
+        })
+};
+exports.getEventsByOrg = function(req, res) {
+    console.log(req.params.name);
+    Event.find({ org_name: req.params.name })
+        .then(doc => {
+            res.status(201).json(doc);
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
         })
 };
 
@@ -20,32 +57,13 @@ exports.createEvent = function(req, res) {
     console.log(req.body);
     var newEvent = new Event(req.body);
     console.log(newEvent);
-    var qrData = [{
-        type: "event",
-        org_name: req.body.org_name,
-        org_id: req.body.org_id,
-        event_id: newEvent._id,
-        event_name: newEvent.name,
-        event_type: newEvent.point_categories,
-        location_enforce: newEvent.location_enforce,
-        location_radius: newEvent.location_radius,
-        point_categories: newEvent.point_categories,
-        additional_fields: newEvent.additional_fields
-    }];
-    QRCode.toDataURL(JSON.stringify(qrData))
+    newEvent
+        .save()
         .then(document => {
-            newEvent.qr_code = document;
-            newEvent
-                .save()
-                .then(document => {
-                    res.status(201).json(document);
-                })
-                .catch(err => {
-                    console.error(err);
-                    res.status(400).json(err.message);
-                });
+            res.status(201).json(document);
         })
         .catch(err => {
+            console.error(err);
             res.status(400).json(err.message);
         });
 };
@@ -239,4 +257,4 @@ exports.checkIn = function(req, res) {
             console.error(err);
             res.status(400).json(err.message);
         });
-};
+}

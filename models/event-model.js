@@ -37,10 +37,6 @@ var Event = new mongoose.Schema({
         type: String,
         required: true
     },
-    qr_code: {
-        type: String,
-        required: true
-    },
     location_enforce: {
         type: Boolean,
         required: true
