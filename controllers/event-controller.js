@@ -5,6 +5,16 @@ var CheckIn = require("../models/checkin-model");
 var Org = require("../models/organization-model");
 var User = require("../models/user-model");
 
+exports.getEventName = function(req, res) {
+    Event.findById(req.params.id, 'name additional_fields')
+        .then(doc => {
+            res.status(201).json(doc);
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+        });
+}
+
 exports.getEventQR = function(req, res) {
     Event.findById(req.params.id, 'org_name org_id name point_categories location_enforce location_radius additional_fields')
         .then(doc => {
@@ -38,7 +48,7 @@ exports.getEventsByOrg = function(req, res) {
             res.status(201).json(doc);
         })
         .catch(err => {
-            res.status(400).json(err.message);
+            res.status(500).json(err.message);
         })
 };
 
@@ -245,4 +255,4 @@ exports.checkIn = function(req, res) {
             console.error(err);
             res.status(400).json(err.message);
         });
-};
+}
