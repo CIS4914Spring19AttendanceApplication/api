@@ -148,119 +148,117 @@ exports.getCheckInHistory = function(req, res, next) {
         });
 };
 
-exports.getCheckInHistory = function(req, res, next){
-  CheckIn.find({ email : req.params.email })
-    .select({'event_id' : 1, '_id' : 0})
-    .then(document => {
-      if(document){
-        res.locals.checkIns = document;
-        next();
-      }
-      else{
-        res.status(404).json({message: "Error Retrieving CheckIns"});
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(400).json(err.message);
+exports.getCheckInHistory = function(req, res, next) {
+    CheckIn.find({ email: req.params.email })
+        .select({ 'event_id': 1, '_id': 0 })
+        .then(document => {
+            if (document) {
+                res.locals.checkIns = document;
+                next();
+            } else {
+                res.status(404).json({ message: "Error Retrieving CheckIns" });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(400).json(err.message);
+        });
+};
+
+exports.getEventHistory = function(req, res, next) {
+    var events = [];
+    //loop through all of the check ins to save the events
+    res.locals.checkIns.forEach(function(ci) {
+        Event.findById(ci["event_id"])
+            .select('org_name name location date point_categories')
+            .then(document => {
+                events.push(document);
+                //if all of the events are added
+                if (events.length == res.locals.checkIns.length) {
+                    //sort the events by org_name
+                    var result = _.chain(events)
+                        .groupBy("org_name")
+                        .toPairs()
+                        .map(item => _.zipObject(["org", "events"], item))
+                        .value();
+
+                    res.locals.events = result;
+                    next();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json(err.message);
+            });
     });
 };
 
-exports.getEventHistory = function(req, res, next){
-  var events = [];
-  //loop through all of the check ins to save the events
-  res.locals.checkIns.forEach(function(ci){
-    Event.findById(ci["event_id"])
-      .select('org_name name location date point_categories')
-      .then(document => {
-        events.push(document);
-        //if all of the events are added
-        if(events.length == res.locals.checkIns.length){
-          //sort the events by org_name
-          var result = _.chain(events)
-            .groupBy("org_name")
-            .toPairs()
-            .map(item => _.zipObject(["org", "events"], item))
-            .value();
+exports.getPointReqs = function(req, res, next) {
+    var result = [];
 
-          res.locals.events = result;
-          next();
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(400).json(err.message);
-      });
-  });
+    res.locals.events.forEach(function(e) {
+        var total_needed = 0;
+        Organization.find({ "name": e["org"] })
+            .select({ 'point_categories': 1, '_id': 0 })
+            .then(document => {
+                if (document) {
+                    var org = JSON.parse(JSON.stringify(e));
+                    org.point_status = [];
+
+                    console.log(document[0].point_categories);
+                    document[0].point_categories.forEach(function(pc) {
+                        total_needed = total_needed + pc["points"];
+                        org.point_status.push({
+                            category: pc["name"],
+                            total_points: pc["points"],
+                            current_points: 0
+                        });
+                    });
+
+                    //add final json object for total points
+                    org.point_status.push({
+                        category: "Complete",
+                        total_points: total_needed,
+                        current_points: 0
+                    });
+
+                    result.push(org);
+
+                    if (result.length == res.locals.events.length) {
+                        res.locals.points = result;
+                        next();
+                    }
+                } else {
+                    res.status(404).json({ message: "Error Retrieving Organization" });
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(400).json(err.message);
+            });
+    });
+
 };
 
-exports.getPointReqs = function(req, res, next){
-  var result = [];
-
-  res.locals.events.forEach(function(e){
-    var total_needed = 0;
-    Organization.find({"name": e["org"]})
-    .select({'point_categories' : 1, '_id' : 0})
-    .then(document => {
-      if(document){
-        var org = JSON.parse(JSON.stringify(e));
-        org.point_status = [];
-
-        console.log(document[0].point_categories);
-        document[0].point_categories.forEach(function(pc){
-          total_needed = total_needed + pc["points"];
-          org.point_status.push({
-            category: pc["name"],
-            total_points: pc["points"],
-            current_points: 0
-          });
+exports.getPointHistory = function(req, res) {
+    //loop through the events
+    res.locals.points.forEach(function(org) {
+        var org_total = 0;
+        org["events"].forEach(function(e) {
+            e["point_categories"].forEach(function(p) {
+                org["point_status"].forEach(function(s) {
+                    if (s["category"] == p["name"]) {
+                        var pointCat = JSON.parse(JSON.stringify(s));
+                        var curr = pointCat.current_points + p["points"];
+                        s["current_points"] = curr;
+                        org_total = org_total + p["points"];
+                    }
+                });
+            });
         });
-
-        //add final json object for total points
-        org.point_status.push({
-          category: "Complete",
-          total_points: total_needed,
-          current_points: 0
-        });
-
-        result.push(org);
-
-        if(result.length == res.locals.events.length){
-          res.locals.points = result;
-          next();
-        }
-      }
-      else{
-        res.status(404).json({message: "Error Retrieving Organization"});
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(400).json(err.message);
+        org.point_status[(org["point_status"].length - 1)].current_points = org_total;
     });
-  });
-  
-};
-
-exports.getPointHistory = function(req, res){
-  //loop through the events
-  res.locals.points.forEach(function(org){
-    var org_total = 0;
-    org["events"].forEach(function(e){
-      e["point_categories"].forEach(function(p){
-        org["point_status"].forEach(function(s){
-          if(s["category"] == p["name"]){
-            var pointCat = JSON.parse(JSON.stringify(s));
-            var curr = pointCat.current_points + p["points"];
-            s["current_points"] = curr;
-            org_total = org_total + p["points"];
-          }
-        });
-      });
-    });
-    org.point_status[(org["point_status"].length - 1)].current_points = org_total;
-  });
-  res.status(200).json(res.locals.points);
+    res.status(200).json(res.locals.points);
 };
 
 exports.setActiveOrg = function(req, res) {
