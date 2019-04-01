@@ -4,6 +4,7 @@ var QRCode = require("qrcode");
 var CheckIn = require("../models/checkin-model");
 var Org = require("../models/organization-model");
 var User = require("../models/user-model");
+var geolib = require("geolib");
 
 exports.getEventName = function(req, res) {
     Event.findById(req.params.id, 'name additional_fields')
@@ -221,7 +222,8 @@ exports.checkLocation = function(req, res, next) {
     Event.findById({ _id: req.body.event_id }).then(document => {
             if (document.location_enforce) {
                 //compare the passed in location radius
-                if (false) {
+                if (!geolib.isPointInCircle({latitude: req.body.latitude, longitude: req.body.longitude}, 
+                    {latitude: document.location_lat, longitude: document.location_lng}, document.location_radius)) {
                     res.status(403).json({ message: "You are not in the proper location to sign in to this event." });
                 }
             }
