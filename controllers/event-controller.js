@@ -6,15 +6,15 @@ var Org = require("../models/organization-model");
 var User = require("../models/user-model");
 
 exports.getEventQR = function(req, res) {
-    Event.findById(req.params.id)
+    Event.findById(req.params.id, 'org_name org_id name point_categories location_enforce location_radius additional_fields')
         .then(doc => {
+            console.log(doc);
             var qrData = [{
                 type: "event",
                 org_name: doc.org_name,
                 org_id: doc.org_id,
                 event_id: doc._id,
                 event_name: doc.name,
-                event_type: doc.point_categories,
                 location_enforce: doc.location_enforce,
                 location_radius: doc.location_radius,
                 point_categories: doc.point_categories,
@@ -22,7 +22,7 @@ exports.getEventQR = function(req, res) {
             }];
             QRCode.toDataURL(JSON.stringify(qrData))
                 .then(qr => {
-                    res.status(201).json({ qr_code: qr });
+                    res.status(201).json({ org_name: doc.org_name, name: doc.name, qr_code: qr });
                 }).catch(err => {
 
                 });
