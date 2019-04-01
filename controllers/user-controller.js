@@ -19,6 +19,28 @@ exports.getActiveOrg = function(req, res) {
         });
 };
 
+exports.getUsersByEvent = function(req, res, next) {
+    CheckIn.find({ event_id: req.params.id }, 'email org_id')
+        .then(doc => {
+            res.locals.org_id = doc[0].org_id;
+            res.locals.users = doc;
+            next();
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+        });
+};
+
+exports.getUserProfileNoEnrollments = function(req, res, next) {
+    //console.log(res.locals.users);
+    var usersEmails = _.map(res.locals.users, 'email');
+    User.find({ email: { $in: usersEmails } }, 'first_name last_name email phone year')
+        .then(doc => {
+            res.locals.membersAttended = doc;
+            next();
+        });
+};
+
 exports.getUserEnrollments = function(req, res) {
     User.findOne({ email: req.params.email })
         .then(doc => {

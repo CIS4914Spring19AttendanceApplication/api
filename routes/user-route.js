@@ -1,5 +1,7 @@
 let router = require('express').Router();
 var user_controller = require('../controllers/user-controller');
+var org_controller = require('../controllers/organization-controller');
+
 let jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 
@@ -23,7 +25,7 @@ router.get('/get/:email', authCheck, user_controller.getUserProfile);
 router.get('/history/:email', authCheck, user_controller.getCheckInHistory, user_controller.getEventHistory, user_controller.getPointReqs, user_controller.getPointHistory);
 router.get('/get/enrollments/:email', authCheck, user_controller.getUserEnrollments);
 router.get('/get/boardenrollments/:email', authCheck, user_controller.getUserBoardEnrollments);
-
+router.get('/get/byevent/:id', user_controller.getUsersByEvent, user_controller.getUserProfileNoEnrollments, org_controller.getOrgMemberCount);
 router.post('/set/activeorg', authCheck, user_controller.setActiveOrg);
 router.get('/get/activeorg/:email', authCheck, user_controller.getActiveOrg);
 
