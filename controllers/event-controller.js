@@ -16,6 +16,19 @@ exports.getEventName = function(req, res) {
         });
 }
 
+exports.getCheckInResponses = function(req, res) {
+    CheckIn.find({ event_id: req.params.id }, 'first_name last_name additional_fields')
+        .then(doc => {
+            console.log(doc);
+            res.status(200).json(doc);
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+
+        });
+
+}
+
 exports.getEventQR = function(req, res) {
     Event.findById(req.params.id, 'org_name org_id name point_categories location_enforce location_radius additional_fields')
         .then(doc => {
@@ -35,6 +48,7 @@ exports.getEventQR = function(req, res) {
                 .then(qr => {
                     res.status(201).json({ org_name: doc.org_name, name: doc.name, qr_code: qr });
                 }).catch(err => {
+                    res.status(500).json(err.message);
 
                 });
         })
@@ -122,13 +136,18 @@ exports.deleteEvent = function(req, res) {
 };
 
 exports.toggleAttendance = function(req, res) {
-    Event.findOne({ _id: req.body._id.$oid })
+    // console.log(req.body);
+
+    Event.findOne({ _id: req.body._id })
         .then(document => {
+            // console.log(document);
+
             updatedEvent = new Event(document);
             updatedEvent.attendance_toggle = !updatedEvent.attendance_toggle;
-            Event.findOneAndUpdate({ _id: req.body._id.$oid }, { $set: { attendance_toggle: updatedEvent.attendance_toggle } }, { new: true })
-                .then(document => {
-                    res.status(201).json(document);
+            Event.findOneAndUpdate({ _id: req.body._id }, { $set: { attendance_toggle: updatedEvent.attendance_toggle } }, { new: true })
+                .then(doc => {
+                    console.log(doc);
+                    res.status(201).json(doc);
                 })
                 .catch(err => {
                     console.error(err);
@@ -222,8 +241,7 @@ exports.checkLocation = function(req, res, next) {
     Event.findById({ _id: req.body.event_id }).then(document => {
             if (document.location_enforce) {
                 //compare the passed in location radius
-                if (!geolib.isPointInCircle({latitude: req.body.latitude, longitude: req.body.longitude}, 
-                    {latitude: document.location_lat, longitude: document.location_lng}, document.location_radius)) {
+                if (!geolib.isPointInCircle({ latitude: req.body.latitude, longitude: req.body.longitude }, { latitude: document.location_lat, longitude: document.location_lng }, document.location_radius)) {
                     res.status(403).json({ message: "You are not in the proper location to sign in to this event." });
                 }
             }

@@ -32,12 +32,17 @@ exports.getOrgMemberCount = function(req, res, next) {
                         attended: groupedAttended.Senior,
                         total: groupedTotal.Senior
                     }
+                    var graduateCounts = {
+                        attended: groupedAttended.Graduate,
+                        total: groupedTotal.Graduate
+                    }
                     var totalSoph = groupedTotal.Sophomore;
                     var totalJun = groupedTotal.Junior;
                     var totalSen = groupedTotal.Senior;
+                    var totalGrad = groupedTotal.Graduate;
 
 
-                    res.status(200).json({ attended: res.locals.membersAttended, total: members, freshman: freshmanCounts, sophomore: sophomoreCounts, junior: juniorCounts, senior: seniorCounts });
+                    res.status(200).json({ attended: res.locals.membersAttended, total: members, freshman: freshmanCounts, sophomore: sophomoreCounts, junior: juniorCounts, senior: seniorCounts, graduate: graduateCounts });
                 })
         })
         .catch(err => {
