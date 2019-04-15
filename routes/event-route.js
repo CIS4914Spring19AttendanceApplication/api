@@ -31,7 +31,8 @@ router.get('/get/byorg/:name', authCheck, event_controller.getEventsByOrg);
 
 router.get('/get/qr/:id', event_controller.getEventQR);
 
-router.get('/get/name/:id', event_controller.getEventName);
+router.get('/get/name/:id', authCheck, event_controller.getEventName);
+router.get('/get/checkin/responses/:id', authCheck, event_controller.getCheckInResponses);
 
 
 
