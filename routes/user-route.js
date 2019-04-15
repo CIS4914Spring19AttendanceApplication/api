@@ -28,5 +28,6 @@ router.get('/get/boardenrollments/:email', authCheck, user_controller.getUserBoa
 router.get('/get/byevent/:id', user_controller.getUsersByEvent, user_controller.getUserProfileNoEnrollments, org_controller.getOrgMemberCount);
 router.post('/set/activeorg', authCheck, user_controller.setActiveOrg);
 router.get('/get/activeorg/:email', authCheck, user_controller.getActiveOrg);
+router.get('/get/byorg/:id', authCheck, user_controller.getUsersByOrg);
 
 module.exports = router;
