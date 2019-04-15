@@ -244,13 +244,8 @@ exports.checkLocation = function(req, res, next) {
                 if (!geolib.isPointInCircle({ latitude: req.body.latitude, longitude: req.body.longitude }, { latitude: document.location_lat, longitude: document.location_lng }, document.location_radius)) {
                     res.status(403).json({ message: "You are not in the proper location to sign in to this event." });
                 }
-                else {
-                  next();
-                }
             }
-            else {
-              next();
-            }
+            next();
         })
         .catch(err => {
             console.error(err);
