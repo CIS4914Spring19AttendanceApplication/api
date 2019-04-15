@@ -5,6 +5,18 @@ var Event = require("../models/event-model");
 var Organization = require("../models/organization-model");
 var _ = require('lodash');
 
+exports.getUsersByOrg = function(req, res) {
+    Organization.find({ _id: req.params.id }, 'member')
+        .then(doc => {
+            res.status(201).json(doc);
+
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+
+        });
+}
+
 exports.getActiveOrg = function(req, res) {
     User.findOne({ email: req.params.email })
         .then(doc => {
