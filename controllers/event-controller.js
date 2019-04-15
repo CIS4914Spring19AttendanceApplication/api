@@ -245,7 +245,9 @@ exports.checkLocation = function(req, res, next) {
                     res.status(403).json({ message: "You are not in the proper location to sign in to this event." });
                 }
             }
-            next();
+            else {
+              next();
+          }
         })
         .catch(err => {
             console.error(err);
